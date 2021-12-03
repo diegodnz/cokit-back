@@ -25,7 +25,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	@Autowired
 	private MessageSource messageSource;
 
-	
+	@ExceptionHandler(MensagemException.class)
+	public ResponseEntity<Object> handleNegocio(MensagemException ex, WebRequest request) {
+		HttpStatus status = ex.getStatus();
+
+		Problem problem = new Problem();
+		problem.setStatus(status.value());
+		problem.setTitle(ex.getMessage());
+		problem.setDateTime(OffsetDateTime.now());
+
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<Object> handleValidation(ConstraintViolationException ex, WebRequest request) {
 		HttpStatus status = HttpStatus.BAD_REQUEST;	

@@ -1,7 +1,8 @@
-package com.pc.services;
+package com.pc.services.Usuario;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.pc.configs.exceptions.MensagemException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.pc.configs.security.JWTUtil;
-import com.pc.dto.UsuarioLogin;
-import com.pc.dto.UsuarioResposta;
-import com.pc.dto.UsuarioRespostaToken;
+import com.pc.dto.Usuario.UsuarioLogin;
+import com.pc.dto.Usuario.UsuarioResposta;
+import com.pc.dto.Usuario.UsuarioRespostaToken;
 import com.pc.model.Usuario;
 import com.pc.repositories.UsuarioRepository;
 
@@ -26,11 +27,16 @@ public class UsuarioService {
 		
 	public ResponseEntity<UsuarioResposta> cadastrar(Usuario usuarioRegistro) {
 			
-		Usuario UsuarioEmail = UsuarioRepo.findByEmail(usuarioRegistro.getEmail());
-		if (UsuarioEmail != null) {
-			return new ResponseEntity<UsuarioResposta>(HttpStatus.BAD_REQUEST);
+		Usuario usuarioEmail = UsuarioRepo.findByEmail(usuarioRegistro.getEmail());
+		if (usuarioEmail != null) {
+			throw new MensagemException("Email já existe", HttpStatus.BAD_REQUEST);
 		}
-		
+
+		Usuario usuarioCpf = UsuarioRepo.findByCpf(usuarioRegistro.getCpf());
+		if (usuarioCpf != null) {
+			throw new MensagemException("CPF já existe", HttpStatus.BAD_REQUEST);
+		}
+
 		usuarioRegistro.setSenha(BCrypt.hashpw(usuarioRegistro.getSenha(), BCrypt.gensalt()));
 		
 		UsuarioRepo.save(usuarioRegistro);

@@ -5,18 +5,17 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pc.dto.UsuarioLogin;
-import com.pc.dto.UsuarioResposta;
-import com.pc.dto.UsuarioRespostaToken;
+import com.pc.dto.Usuario.UsuarioLogin;
+import com.pc.dto.Usuario.UsuarioResposta;
+import com.pc.dto.Usuario.UsuarioRespostaToken;
 import com.pc.model.Usuario;
-import com.pc.services.UsuarioService;
+import com.pc.services.Usuario.UsuarioService;
 
 @RestController
 @RequestMapping("/usuarios")

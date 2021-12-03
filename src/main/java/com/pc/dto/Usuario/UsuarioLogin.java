@@ -1,4 +1,4 @@
-package com.pc.dto;
+package com.pc.dto.Usuario;
 
 import javax.validation.constraints.NotBlank;
 

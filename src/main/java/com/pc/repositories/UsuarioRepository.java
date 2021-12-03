@@ -9,6 +9,8 @@ import com.pc.model.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 	
 	Usuario findByEmail(String email);
+
+	Usuario findByCpf(String cpf);
 	
 	Usuario getById(Long id);
 	

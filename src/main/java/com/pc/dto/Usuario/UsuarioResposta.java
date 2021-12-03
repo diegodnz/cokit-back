@@ -1,4 +1,4 @@
-package com.pc.dto;
+package com.pc.dto.Usuario;
 
 public class UsuarioResposta {
 	

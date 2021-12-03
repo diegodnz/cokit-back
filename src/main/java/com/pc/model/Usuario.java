@@ -1,16 +1,16 @@
 package com.pc.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import org.hibernate.validator.constraints.br.CPF;
+
+import java.util.List;
 
 @Entity
 public class Usuario {
@@ -19,6 +19,14 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty(access = Access.READ_ONLY)
 	private Long id;
+
+	@OneToMany(mappedBy = "locatario")
+	private List<Produto> produtosAnunciados;
+
+	@CPF
+	@Column(unique = true)
+	@NotBlank
+	private String cpf;
 	
 	@Email
 	@Column(unique = true)
@@ -31,11 +39,14 @@ public class Usuario {
 	
 	@Size(min = 6, message = "A senha deve conter 6 caracteres no mínimo")
 	@NotBlank
+	@JsonIgnore
 	private String senha;
 
 	public Usuario() {}
 
-	public Usuario(String email, String nome, String senha) {
+	public Usuario(Long id, String cpf, String email, String nome, String senha) {
+		this.id = id;
+		this.cpf = cpf;
 		this.email = email;
 		this.nome = nome;
 		this.senha = senha;
@@ -73,4 +84,11 @@ public class Usuario {
 		this.senha = senha;
 	}
 
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
 }
