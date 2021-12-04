@@ -39,7 +39,6 @@ public class Usuario {
 	
 	@Size(min = 6, message = "A senha deve conter 6 caracteres no mínimo")
 	@NotBlank
-	@JsonIgnore
 	private String senha;
 
 	public Usuario() {}
