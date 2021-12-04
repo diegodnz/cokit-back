@@ -1,13 +1,29 @@
 package com.pc.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pc.dto.Produto.ProdutoOutputListagem;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+@SqlResultSetMapping(
+        name = "ProdutoOutListagem",
+        classes = @ConstructorResult(
+                targetClass = ProdutoOutputListagem.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "avaliacao", type = Double.class),
+                        @ColumnResult(name = "local"),
+                        @ColumnResult(name = "nome"),
+                        @ColumnResult(name = "preco", type = Double.class),
+                        @ColumnResult(name = "usuario_id", type = Long.class)}))
 
 @Entity
-public class Produto {
+public class Produto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +46,13 @@ public class Produto {
     private Double avaliacao;
 
     public Produto() {
+    }
+
+    public Produto(String nome, Long usuario, String local, Double preco, Double avaliacao) {
+        this.nome = nome;
+        this.local = local;
+        this.preco = preco;
+        this.avaliacao = avaliacao;
     }
 
     public Produto(String nome, Usuario locatario, String local, Double preco, Double avaliacao) {
