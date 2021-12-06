@@ -47,14 +47,23 @@ public class ProdutoService {
     public ResponseEntity<ProdutoOutput> cadastrar(ProdutoInput produto, HttpServletRequest req) {
         Usuario logado = getUsuarioLogado(req);
 
-        Produto produtoEntitade = new Produto(produto.getNome(), logado, produto.getLocal(), produto.getPreco(), null);
+        Produto produtoEntitade = new Produto(produto.getNome(), produto.getDescricao(), logado, produto.getLocal(), produto.getPreco(), null);
         produtoRepo.save(produtoEntitade);
 
-        ProdutoOutput produtoOutput = new ProdutoOutput(produtoEntitade.getId(), produtoEntitade.getNome(), logado, produtoEntitade.getLocal(), produtoEntitade.getPreco(), null);
+        ProdutoOutput produtoOutput = new ProdutoOutput(produtoEntitade.getId(), produtoEntitade.getNome(), produtoEntitade.getDescricao(),logado.getId(), logado.getEmail(), logado.getNome(), produtoEntitade.getLocal(), produtoEntitade.getPreco(), null);
         return new ResponseEntity<>(produtoOutput, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Page<ProdutoOutputListagem>> listar(String paginaStr, String limitePaginaStr, String nome, HttpServletRequest req) {
+    public ResponseEntity<ProdutoOutput> verProduto(Long id) {
+        Produto produto = produtoRepo.getById(id);
+        if (produto == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Usuario locatario = usuarioRepo.getOne(produto.getLocatario().getId());
+        return new ResponseEntity<>(new ProdutoOutput(produto.getId(), produto.getNome(), produto.getDescricao(), locatario.getId(), locatario.getEmail(), locatario.getNome(), produto.getLocal(), produto.getPreco(), produto.getAvaliacao()), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Page<ProdutoOutputListagem>> listar(String paginaStr, String limitePaginaStr, String nome) {
         // Transformar dados string para para inteiro
         Pageable pageable;
         int limiteInt = 10;
@@ -66,19 +75,21 @@ public class ProdutoService {
             if (paginaStr != null) {
                 paginaInt = Integer.parseInt(paginaStr)-1;
             }
-            pageable = PageRequest.of(paginaInt, limiteInt, Sort.by(Sort.Direction.DESC, "nome"));
+            pageable = PageRequest.of(paginaInt, limiteInt, Sort.by(Sort.Direction.DESC, "avaliacao"));
         } catch(Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         // Fazer String de query
-        StringBuilder queryString = new StringBuilder().append("SELECT p.id, p.avaliacao, p.local, p.nome, p.preco, p.usuario_id")
-                .append(" FROM Produto p");
+        StringBuilder queryString = new StringBuilder().append("SELECT p.id, p.avaliacao, p.local, p.nome, p.preco, p.usuario_id, u.email as usuario_email, u.nome as usuario_nome")
+                .append(" FROM Produto p")
+                .append(" INNER JOIN Usuario u")
+                .append(" ON p.usuario_id = u.id");
         queryString.append(" WHERE TRUE");
         if (nome != null) {
             queryString.append(" AND p.nome ilike '%'||:nome||'%'");
         }
-        queryString.append(" ORDER BY p.nome DESC");
+        queryString.append(" ORDER BY p.avaliacao DESC NULLS LAST");
 
         Query query = em.createNativeQuery(queryString.toString(), "ProdutoOutListagem");
 
@@ -105,11 +116,4 @@ public class ProdutoService {
 
     }
 
-    private List<ProdutoOutputListagem> transformaParaDto(List<Produto> lista) {
-        List<ProdutoOutputListagem> resultado = new ArrayList<>();
-        for (Produto p : lista) {
-            resultado.add(new ProdutoOutputListagem(p.getId(), p.getNome(), p.getLocatario(), p.getLocal(), p.getPreco(), p.getAvaliacao()));
-        }
-        return resultado;
-    }
 }

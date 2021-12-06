@@ -26,7 +26,7 @@ public class UsuarioController {
 	
 	// ** Cadastrar Usuário **
 	@PostMapping
-	public ResponseEntity<UsuarioResposta> register(@Valid @RequestBody Usuario usuarioEntrada, HttpServletRequest req) {	
+	public ResponseEntity<UsuarioRespostaToken> register(@Valid @RequestBody Usuario usuarioEntrada, HttpServletRequest req) {
 		return usuarioService.cadastrar(usuarioEntrada);
 	}
 	

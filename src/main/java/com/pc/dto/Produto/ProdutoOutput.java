@@ -1,6 +1,7 @@
 package com.pc.dto.Produto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pc.dto.Usuario.UsuarioLocatarioDto;
 import com.pc.model.Usuario;
 
 import javax.persistence.*;
@@ -13,7 +14,9 @@ public class ProdutoOutput {
 
     private String nome;
 
-    private Usuario locatario;
+    private String descricao;
+
+    private UsuarioLocatarioDto locatario;
 
     private String local;
 
@@ -23,10 +26,11 @@ public class ProdutoOutput {
 
     public ProdutoOutput() {}
 
-    public ProdutoOutput(Long id, String nome, Usuario locatario, String local, Double preco, Double avaliacao) {
+    public ProdutoOutput(Long id, String nome, String descricao, Long usuario_id, String usuario_email, String usuario_nome, String local, Double preco, Double avaliacao) {
         this.id = id;
         this.nome = nome;
-        this.locatario = locatario;
+        this.descricao = descricao;
+        this.locatario = new UsuarioLocatarioDto(usuario_id, usuario_email, usuario_nome);
         this.local = local;
         this.preco = preco;
         this.avaliacao = avaliacao;
@@ -48,11 +52,19 @@ public class ProdutoOutput {
         this.nome = nome;
     }
 
-    public Usuario getLocatario() {
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public UsuarioLocatarioDto getLocatario() {
         return locatario;
     }
 
-    public void setLocatario(Usuario locatario) {
+    public void setLocatario(UsuarioLocatarioDto locatario) {
         this.locatario = locatario;
     }
 

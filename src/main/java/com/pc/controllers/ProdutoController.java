@@ -31,8 +31,14 @@ public class ProdutoController {
     @GetMapping
     public ResponseEntity<Page<ProdutoOutputListagem>> listar(@RequestParam(name = "pagina", required = false) String pagina,
                                                               @RequestParam(name = "limite", required = false) String limitePagina,
-                                                              @RequestParam(name = "titulo", required = false) String titulo,
-                                                              HttpServletRequest req) {
-        return produtoService.listar(pagina, limitePagina, titulo, req);
+                                                              @RequestParam(name = "titulo", required = false) String titulo
+                                                              ) {
+        return produtoService.listar(pagina, limitePagina, titulo);
+    }
+
+    // ** Ver produto **
+    @GetMapping("/{id}")
+    public ResponseEntity<ProdutoOutput> verProduto(@PathVariable Long id) {
+        return produtoService.verProduto(id);
     }
 }

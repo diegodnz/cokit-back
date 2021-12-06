@@ -12,6 +12,8 @@ public class ProdutoInput {
     @NotBlank
     private String nome;
 
+    private String descricao;
+
     @NotBlank
     private String local;
 
@@ -20,8 +22,9 @@ public class ProdutoInput {
 
     public ProdutoInput() {}
 
-    public ProdutoInput(String nome, String local, Double preco) {
+    public ProdutoInput(String nome, String descricao, String local, Double preco) {
         this.nome = nome;
+        this.descricao = descricao;
         this.local = local;
         this.preco = preco;
     }
@@ -32,6 +35,14 @@ public class ProdutoInput {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public String getLocal() {

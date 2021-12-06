@@ -25,7 +25,7 @@ public class UsuarioService {
 	@Autowired
 	private JWTUtil jwtUtil;
 		
-	public ResponseEntity<UsuarioResposta> cadastrar(Usuario usuarioRegistro) {
+	public ResponseEntity<UsuarioRespostaToken> cadastrar(Usuario usuarioRegistro) {
 			
 		Usuario usuarioEmail = UsuarioRepo.findByEmail(usuarioRegistro.getEmail());
 		if (usuarioEmail != null) {
@@ -37,12 +37,12 @@ public class UsuarioService {
 			throw new MensagemException("CPF já existe", HttpStatus.BAD_REQUEST);
 		}
 
+		String senhaSemCriptografia = usuarioRegistro.getSenha();
 		usuarioRegistro.setSenha(BCrypt.hashpw(usuarioRegistro.getSenha(), BCrypt.gensalt()));
 		
 		UsuarioRepo.save(usuarioRegistro);
-		UsuarioResposta resposta = new UsuarioResposta(usuarioRegistro.getId(), usuarioRegistro.getEmail(), usuarioRegistro.getNome());
 		
-		return new ResponseEntity<UsuarioResposta>(resposta, HttpStatus.CREATED);
+		return login(new UsuarioLogin(usuarioRegistro.getEmail(), senhaSemCriptografia));
 	}
 	
 	public ResponseEntity<UsuarioRespostaToken> login(UsuarioLogin dadosLogin) {

@@ -1,5 +1,6 @@
 package com.pc.dto.Produto;
 
+import com.pc.dto.Usuario.UsuarioLocatarioDto;
 import com.pc.model.Usuario;
 
 import javax.persistence.ColumnResult;
@@ -10,7 +11,7 @@ public class ProdutoOutputListagem {
 
     private String nome;
 
-    private Usuario locatario;
+    private UsuarioLocatarioDto locatario;
 
     private String local;
 
@@ -20,21 +21,13 @@ public class ProdutoOutputListagem {
 
     public ProdutoOutputListagem() {}
 
-    public ProdutoOutputListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id) {
+    public ProdutoOutputListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome) {
         this.id = id;
         this.nome = nome;
         this.local = local;
         this.preco = preco;
         this.avaliacao = avaliacao;
-    }
-
-    public ProdutoOutputListagem(Long id, String nome, Usuario locatario, String local, Double preco, Double avaliacao) {
-        this.id = id;
-        this.nome = nome;
-        this.locatario = locatario;
-        this.local = local;
-        this.preco = preco;
-        this.avaliacao = avaliacao;
+        this.locatario = new UsuarioLocatarioDto(usuario_id, usuario_email, usuario_nome);
     }
 
     public Long getId() {
@@ -53,11 +46,11 @@ public class ProdutoOutputListagem {
         this.nome = nome;
     }
 
-    public Usuario getLocatario() {
+    public UsuarioLocatarioDto getLocatario() {
         return locatario;
     }
 
-    public void setLocatario(Usuario locatario) {
+    public void setLocatario(UsuarioLocatarioDto locatario) {
         this.locatario = locatario;
     }
 

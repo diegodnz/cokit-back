@@ -18,7 +18,11 @@ import java.io.Serializable;
                         @ColumnResult(name = "local"),
                         @ColumnResult(name = "nome"),
                         @ColumnResult(name = "preco", type = Double.class),
-                        @ColumnResult(name = "usuario_id", type = Long.class)}))
+                        @ColumnResult(name = "usuario_id", type = Long.class),
+                        @ColumnResult(name = "usuario_email"),
+                        @ColumnResult(name = "usuario_nome")
+                })
+)
 
 @Entity
 public class Produto implements Serializable {
@@ -33,6 +37,8 @@ public class Produto implements Serializable {
     @NotBlank
     private String nome;
 
+    private String descricao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario locatario;
@@ -45,18 +51,11 @@ public class Produto implements Serializable {
 
     private Double avaliacao;
 
-    public Produto() {
-    }
+    public Produto() {}
 
-    public Produto(String nome, Long usuario, String local, Double preco, Double avaliacao) {
+    public Produto(String nome, String descricao, Usuario locatario, String local, Double preco, Double avaliacao) {
         this.nome = nome;
-        this.local = local;
-        this.preco = preco;
-        this.avaliacao = avaliacao;
-    }
-
-    public Produto(String nome, Usuario locatario, String local, Double preco, Double avaliacao) {
-        this.nome = nome;
+        this.descricao = descricao;
         this.locatario = locatario;
         this.local = local;
         this.preco = preco;
@@ -77,6 +76,14 @@ public class Produto implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public Usuario getLocatario() {
