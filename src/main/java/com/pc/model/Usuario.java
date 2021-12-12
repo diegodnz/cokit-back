@@ -41,6 +41,9 @@ public class Usuario {
 	@NotBlank
 	private String senha;
 
+	@OneToMany(mappedBy = "locador")
+	private List<AluguelProduto> alugueis;
+
 	public Usuario() {}
 
 	public Usuario(Long id, String cpf, String email, String nome, String senha) {

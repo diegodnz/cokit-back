@@ -2,11 +2,15 @@ package com.pc.services.Produto;
 
 import com.pc.configs.exceptions.MensagemException;
 import com.pc.configs.security.JWTUtil;
+import com.pc.dto.AluguelProduto.IntervaloDatas;
+import com.pc.dto.Produto.AlugarProdutoInput;
 import com.pc.dto.Produto.ProdutoInput;
 import com.pc.dto.Produto.ProdutoOutput;
 import com.pc.dto.Produto.ProdutoOutputListagem;
+import com.pc.model.AluguelProduto;
 import com.pc.model.Produto;
 import com.pc.model.Usuario;
+import com.pc.repositories.AluguelProdutoRepository;
 import com.pc.repositories.ProdutoRepository;
 import com.pc.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -29,6 +35,9 @@ public class ProdutoService {
 
     @Autowired
     private ProdutoRepository produtoRepo;
+
+    @Autowired
+    private AluguelProdutoRepository aluguelRepo;
 
     @Autowired
     private JWTUtil jwtUtil;
@@ -47,11 +56,38 @@ public class ProdutoService {
     public ResponseEntity<ProdutoOutput> cadastrar(ProdutoInput produto, HttpServletRequest req) {
         Usuario logado = getUsuarioLogado(req);
 
-        Produto produtoEntitade = new Produto(produto.getNome(), produto.getDescricao(), logado, produto.getLocal(), produto.getPreco(), null);
-        produtoRepo.save(produtoEntitade);
+        Produto produtoEntidade = new Produto(produto.getNome(), produto.getDescricao(), logado, produto.getLocal(), produto.getPreco(), null);
+        produtoRepo.save(produtoEntidade);
 
-        ProdutoOutput produtoOutput = new ProdutoOutput(produtoEntitade.getId(), produtoEntitade.getNome(), produtoEntitade.getDescricao(),logado.getId(), logado.getEmail(), logado.getNome(), produtoEntitade.getLocal(), produtoEntitade.getPreco(), null);
+        ProdutoOutput produtoOutput = new ProdutoOutput(produtoEntidade.getId(), produtoEntidade.getNome(), produtoEntidade.getDescricao(),logado.getId(), logado.getEmail(), logado.getNome(), produtoEntidade.getLocal(), produtoEntidade.getPreco(), null, new HashSet<>());
         return new ResponseEntity<>(produtoOutput, HttpStatus.CREATED);
+    }
+
+    private HashSet<LocalDate> obterDatasIndisponiveis(Long produtoId) {
+        List<AluguelProduto> datasAlugadas = aluguelRepo.getDatasAlugadas(produtoId, LocalDate.now());
+        List<IntervaloDatas> intervalosAlugueis = new ArrayList<>();
+        for (AluguelProduto aluguel : datasAlugadas) {
+            intervalosAlugueis.add(new IntervaloDatas(aluguel.getDataInicial(), aluguel.getDataFinal()));
+        }
+
+        HashSet<LocalDate> datasAlugadasUmaVez = new HashSet<>();
+        HashSet<LocalDate> datasIndisponiveis = new HashSet<>();
+        for (IntervaloDatas intervalo : intervalosAlugueis) {
+            LocalDate dataAtual = intervalo.getDataInicial();
+            LocalDate dataFinal = intervalo.getDataFinal();
+            while (!dataAtual.isAfter(dataFinal)) {
+                System.out.println(dataAtual);
+                if (datasAlugadasUmaVez.contains(dataAtual)) {
+                    if (!datasIndisponiveis.contains(dataAtual)) {
+                        datasIndisponiveis.add(dataAtual); // Só ficará indisponível caso seja alugada 2 vezes neste dia
+                    }
+                } else {
+                    datasAlugadasUmaVez.add(dataAtual);
+                }
+                dataAtual = dataAtual.plusDays(1);
+            }
+        }
+        return datasIndisponiveis;
     }
 
     public ResponseEntity<ProdutoOutput> verProduto(Long id) {
@@ -59,8 +95,29 @@ public class ProdutoService {
         if (produto == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        HashSet<LocalDate> datasIndisponiveis = obterDatasIndisponiveis(produto.getId());
         Usuario locatario = usuarioRepo.getOne(produto.getLocatario().getId());
-        return new ResponseEntity<>(new ProdutoOutput(produto.getId(), produto.getNome(), produto.getDescricao(), locatario.getId(), locatario.getEmail(), locatario.getNome(), produto.getLocal(), produto.getPreco(), produto.getAvaliacao()), HttpStatus.OK);
+        return new ResponseEntity<>(new ProdutoOutput(produto.getId(), produto.getNome(), produto.getDescricao(), locatario.getId(), locatario.getEmail(), locatario.getNome(), produto.getLocal(), produto.getPreco(), produto.getAvaliacao(), datasIndisponiveis), HttpStatus.OK);
+    }
+
+    public void alugarProduto(Long id, AlugarProdutoInput alugarInput, HttpServletRequest req) {
+        Usuario logado = getUsuarioLogado(req);
+
+        Produto produto = produtoRepo.getById(id);
+        if (produto == null) {
+            throw new MensagemException("Produto não encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        if (!alugarInput.getUnicoDia() && alugarInput.getDataFinal() == null) {
+            throw new MensagemException("Por favor, preencha a data final", HttpStatus.BAD_REQUEST);
+        }
+
+        if (alugarInput.getUnicoDia()) {
+            alugarInput.setDataFinal(alugarInput.getDataInicial());
+        }
+
+        AluguelProduto aluguel = new AluguelProduto(logado, alugarInput.getDataInicial(),alugarInput.getDataFinal(), produto);
+        aluguelRepo.save(aluguel);
     }
 
     public ResponseEntity<Page<ProdutoOutputListagem>> listar(String paginaStr, String limitePaginaStr, String nome) {

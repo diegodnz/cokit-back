@@ -2,11 +2,15 @@ package com.pc.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pc.dto.Produto.ProdutoOutputListagem;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @SqlResultSetMapping(
         name = "ProdutoOutListagem",
@@ -51,6 +55,9 @@ public class Produto implements Serializable {
 
     private Double avaliacao;
 
+    @OneToMany(mappedBy = "produto")
+    private List<AluguelProduto> alugueis;
+
     public Produto() {}
 
     public Produto(String nome, String descricao, Usuario locatario, String local, Double preco, Double avaliacao) {
@@ -60,6 +67,14 @@ public class Produto implements Serializable {
         this.local = local;
         this.preco = preco;
         this.avaliacao = avaliacao;
+    }
+
+    public List<AluguelProduto> getAlugueis() {
+        return alugueis;
+    }
+
+    public void setAlugueis(List<AluguelProduto> alugueis) {
+        this.alugueis = alugueis;
     }
 
     public Long getId() {

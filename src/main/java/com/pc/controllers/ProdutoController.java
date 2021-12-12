@@ -1,5 +1,6 @@
 package com.pc.controllers;
 
+import com.pc.dto.Produto.AlugarProdutoInput;
 import com.pc.dto.Produto.ProdutoInput;
 import com.pc.dto.Produto.ProdutoOutput;
 import com.pc.dto.Produto.ProdutoOutputListagem;
@@ -7,6 +8,7 @@ import com.pc.services.Produto.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,5 +42,12 @@ public class ProdutoController {
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoOutput> verProduto(@PathVariable Long id) {
         return produtoService.verProduto(id);
+    }
+
+    // ** Alugar produto **
+    @PostMapping("/{id}/alugar")
+    @ResponseStatus(HttpStatus.OK)
+    public void alugarProduto(@PathVariable Long id, @RequestBody @Valid AlugarProdutoInput alugarInput, HttpServletRequest req) {
+        produtoService.alugarProduto(id, alugarInput, req);
     }
 }

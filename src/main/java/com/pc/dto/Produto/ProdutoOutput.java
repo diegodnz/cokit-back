@@ -1,12 +1,9 @@
 package com.pc.dto.Produto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pc.dto.Usuario.UsuarioLocatarioDto;
-import com.pc.model.Usuario;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Set;
 
 public class ProdutoOutput {
 
@@ -24,9 +21,11 @@ public class ProdutoOutput {
 
     private Double avaliacao;
 
+    private Set<LocalDate> datasAlugadas;
+
     public ProdutoOutput() {}
 
-    public ProdutoOutput(Long id, String nome, String descricao, Long usuario_id, String usuario_email, String usuario_nome, String local, Double preco, Double avaliacao) {
+    public ProdutoOutput(Long id, String nome, String descricao, Long usuario_id, String usuario_email, String usuario_nome, String local, Double preco, Double avaliacao, Set<LocalDate> datasAlugadas) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -34,6 +33,15 @@ public class ProdutoOutput {
         this.local = local;
         this.preco = preco;
         this.avaliacao = avaliacao;
+        this.datasAlugadas = datasAlugadas;
+    }
+
+    public Set<LocalDate> getDatasAlugadas() {
+        return datasAlugadas;
+    }
+
+    public void setDatasAlugadas(Set<LocalDate> datasAlugadas) {
+        this.datasAlugadas = datasAlugadas;
     }
 
     public Long getId() {
