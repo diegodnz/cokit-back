@@ -44,6 +44,12 @@ public class Usuario {
 	@OneToMany(mappedBy = "locador")
 	private List<AluguelProduto> alugueis;
 
+	@OneToMany(mappedBy = "remetente")
+	private List<Mensagens> mensagensEnviadas;
+
+	@OneToMany(mappedBy = "destinatario")
+	private List<Mensagens> mensagensRecebidas;
+
 	public Usuario() {}
 
 	public Usuario(Long id, String cpf, String email, String nome, String senha) {

@@ -13,6 +13,7 @@ import com.pc.model.Usuario;
 import com.pc.repositories.AluguelProdutoRepository;
 import com.pc.repositories.ProdutoRepository;
 import com.pc.repositories.UsuarioRepository;
+import com.pc.services.ServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -40,21 +41,13 @@ public class ProdutoService {
     private AluguelProdutoRepository aluguelRepo;
 
     @Autowired
-    private JWTUtil jwtUtil;
-
-    @Autowired
     private EntityManager em;
 
-    private Usuario getUsuarioLogado(HttpServletRequest req) {
-        Usuario logado = jwtUtil.getPessoaLogada(usuarioRepo, req);
-        if (logado == null) {
-            throw new MensagemException("Logar", HttpStatus.UNAUTHORIZED);
-        }
-        return logado;
-    }
+    @Autowired
+    private ServiceHelper serviceHelper;
 
     public ResponseEntity<ProdutoOutput> cadastrar(ProdutoInput produto, HttpServletRequest req) {
-        Usuario logado = getUsuarioLogado(req);
+        Usuario logado = serviceHelper.getUsuarioLogado(req);
 
         Produto produtoEntidade = new Produto(produto.getNome(), produto.getDescricao(), logado, produto.getLocal(), produto.getPreco(), null);
         produtoRepo.save(produtoEntidade);
@@ -101,7 +94,7 @@ public class ProdutoService {
     }
 
     public void alugarProduto(Long id, AlugarProdutoInput alugarInput, HttpServletRequest req) {
-        Usuario logado = getUsuarioLogado(req);
+        Usuario logado = serviceHelper.getUsuarioLogado(req);
 
         Produto produto = produtoRepo.getById(id);
         if (produto == null) {

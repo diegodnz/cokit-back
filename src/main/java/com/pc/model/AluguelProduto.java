@@ -28,7 +28,6 @@ public class AluguelProduto implements Serializable {
     public AluguelProduto() {}
 
     public AluguelProduto(Usuario locador, LocalDate dataInicial, LocalDate dataFinal, Produto produto) {
-        this.id = id;
         this.locador = locador;
         this.dataInicial = dataInicial;
         this.dataFinal = dataFinal;
