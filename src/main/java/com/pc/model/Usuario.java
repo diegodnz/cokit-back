@@ -21,42 +21,44 @@ public class Usuario {
 	private Long id;
 
 	@OneToMany(mappedBy = "locatario")
+	@JsonProperty(access = Access.READ_ONLY)
 	private List<Produto> produtosAnunciados;
 
-	@CPF
-	@Column(unique = true)
-	@NotBlank
-	private String cpf;
-	
-	@Email
-	@Column(unique = true)
-	@NotBlank
-	private String email;
-	
-	@Size(min = 4, message = "O nome deve conter 4 caracteres no mínimo")
-	@NotBlank
 	private String nome;
-	
-	@Size(min = 6, message = "A senha deve conter 6 caracteres no mínimo")
-	@NotBlank
+
+	private String cpf;
+
+	private String identidade;
+
+	private String email;
+
+	private String celular;
+
+	private String usuario;
+
 	private String senha;
 
 	@OneToMany(mappedBy = "locador")
+	@JsonProperty(access = Access.READ_ONLY)
 	private List<AluguelProduto> alugueis;
 
 	@OneToMany(mappedBy = "remetente")
+	@JsonProperty(access = Access.READ_ONLY)
 	private List<Mensagens> mensagensEnviadas;
 
 	@OneToMany(mappedBy = "destinatario")
+	@JsonProperty(access = Access.READ_ONLY)
 	private List<Mensagens> mensagensRecebidas;
 
 	public Usuario() {}
 
-	public Usuario(Long id, String cpf, String email, String nome, String senha) {
-		this.id = id;
-		this.cpf = cpf;
-		this.email = email;
+	public Usuario(String nome, String cpf, String identidade, String email, String celular, String usuario, String senha) {
 		this.nome = nome;
+		this.cpf = cpf;
+		this.identidade = identidade;
+		this.email = email;
+		this.celular = celular;
+		this.usuario = usuario;
 		this.senha = senha;
 	}
 
@@ -68,12 +70,12 @@ public class Usuario {
 		this.id = id;
 	}
 
-	public String getEmail() {
-		return email;
+	public List<Produto> getProdutosAnunciados() {
+		return produtosAnunciados;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setProdutosAnunciados(List<Produto> produtosAnunciados) {
+		this.produtosAnunciados = produtosAnunciados;
 	}
 
 	public String getNome() {
@@ -84,6 +86,46 @@ public class Usuario {
 		this.nome = nome;
 	}
 
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getIdentidade() {
+		return identidade;
+	}
+
+	public void setIdentidade(String identidade) {
+		this.identidade = identidade;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCelular() {
+		return celular;
+	}
+
+	public void setCelular(String celular) {
+		this.celular = celular;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
 	public String getSenha() {
 		return senha;
 	}
@@ -92,11 +134,27 @@ public class Usuario {
 		this.senha = senha;
 	}
 
-	public String getCpf() {
-		return cpf;
+	public List<AluguelProduto> getAlugueis() {
+		return alugueis;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	public void setAlugueis(List<AluguelProduto> alugueis) {
+		this.alugueis = alugueis;
+	}
+
+	public List<Mensagens> getMensagensEnviadas() {
+		return mensagensEnviadas;
+	}
+
+	public void setMensagensEnviadas(List<Mensagens> mensagensEnviadas) {
+		this.mensagensEnviadas = mensagensEnviadas;
+	}
+
+	public List<Mensagens> getMensagensRecebidas() {
+		return mensagensRecebidas;
+	}
+
+	public void setMensagensRecebidas(List<Mensagens> mensagensRecebidas) {
+		this.mensagensRecebidas = mensagensRecebidas;
 	}
 }
