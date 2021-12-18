@@ -3,6 +3,7 @@ package com.pc.services.Mensagem;
 import com.pc.configs.exceptions.MensagemException;
 import com.pc.dto.Mensagem.Chat;
 import com.pc.dto.Mensagem.MensagemInput;
+import com.pc.dto.Mensagem.MensagemOutput;
 import com.pc.model.Mensagens;
 import com.pc.model.Usuario;
 import com.pc.repositories.MensagemRepository;
@@ -45,21 +46,28 @@ public class MensagemService {
 
     public List<Chat> mensagensRecebidas(HttpServletRequest req) {
         Usuario logado = serviceHelper.getUsuarioLogado(req);
-        List<Mensagens> mensagens = mensagemRepository.getByDestinatario(logado);
-        return agruparPorRemetente(mensagens);
+        List<Mensagens> mensagens = mensagemRepository.getByUsuario(logado.getId());
+        return agruparPorRemetente(mensagens, logado);
 
     }
 
-    private List<Chat> agruparPorRemetente(List<Mensagens> mensagens) {
+    private List<Chat> agruparPorRemetente(List<Mensagens> mensagens, Usuario logado) {
         Map<Long, Chat> chats = new HashMap<>();
         for (Mensagens msg : mensagens) {
-            Long idRemetente = msg.getRemetente().getId();
-            if (chats.containsKey(idRemetente)) {
-                chats.get(idRemetente).addMensagem(msg);
+            boolean enviouMensagem = msg.getRemetente().getId() == logado.getId();
+            Long idOutroUsuario;
+            if (enviouMensagem) {
+                idOutroUsuario = msg.getDestinatario().getId();
             } else {
-                List<Mensagens> mensagemLista = new ArrayList<>();
-                mensagemLista.add(msg);
-                chats.put(idRemetente, new Chat(msg.getRemetente().getId(), msg.getRemetente().getEmail(), msg.getRemetente().getNome(), mensagemLista));
+                idOutroUsuario = msg.getRemetente().getId();
+            }
+
+            if (chats.containsKey(idOutroUsuario)) {
+                chats.get(idOutroUsuario).addMensagem(new MensagemOutput(msg.getMensagem(), msg.getDataEnvio(), enviouMensagem));
+            } else {
+                List<MensagemOutput> mensagemLista = new ArrayList<>();
+                mensagemLista.add(new MensagemOutput(msg.getMensagem(), msg.getDataEnvio(), enviouMensagem));
+                chats.put(idOutroUsuario, new Chat(msg.getRemetente().getId(), msg.getRemetente().getEmail(), msg.getRemetente().getNome(), mensagemLista));
             }
         }
         List<Chat> chatsLista = new ArrayList<>();

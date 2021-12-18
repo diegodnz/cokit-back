@@ -12,9 +12,9 @@ public class Chat {
 
     private String usuarioNome;
 
-    private List<Mensagens> mensagens;
+    private List<MensagemOutput> mensagens;
 
-    public Chat(Long usuarioId, String usuarioEmail, String usuarioNome, List<Mensagens> mensagens) {
+    public Chat(Long usuarioId, String usuarioEmail, String usuarioNome, List<MensagemOutput> mensagens) {
         this.usuarioId = usuarioId;
         this.usuarioEmail = usuarioEmail;
         this.usuarioNome = usuarioNome;
@@ -45,15 +45,15 @@ public class Chat {
         this.usuarioNome = usuarioNome;
     }
 
-    public List<Mensagens> getMensagens() {
+    public List<MensagemOutput> getMensagens() {
         return mensagens;
     }
 
-    public void setMensagens(List<Mensagens> mensagens) {
+    public void setMensagens(List<MensagemOutput> mensagens) {
         this.mensagens = mensagens;
     }
 
-    public void addMensagem(Mensagens mensagem) {
+    public void addMensagem(MensagemOutput mensagem) {
         this.mensagens.add(mensagem);
     }
 }
