@@ -55,19 +55,19 @@ public class MensagemService {
         Map<Long, Chat> chats = new HashMap<>();
         for (Mensagens msg : mensagens) {
             boolean enviouMensagem = msg.getRemetente().getId() == logado.getId();
-            Long idOutroUsuario;
+            Usuario outroUsuario;
             if (enviouMensagem) {
-                idOutroUsuario = msg.getDestinatario().getId();
+                outroUsuario = msg.getDestinatario();
             } else {
-                idOutroUsuario = msg.getRemetente().getId();
+                outroUsuario = msg.getRemetente();
             }
 
-            if (chats.containsKey(idOutroUsuario)) {
-                chats.get(idOutroUsuario).addMensagem(new MensagemOutput(msg.getMensagem(), msg.getDataEnvio(), enviouMensagem));
+            if (chats.containsKey(outroUsuario.getId())) {
+                chats.get(outroUsuario.getId()).addMensagem(new MensagemOutput(msg.getMensagem(), msg.getDataEnvio(), enviouMensagem));
             } else {
                 List<MensagemOutput> mensagemLista = new ArrayList<>();
                 mensagemLista.add(new MensagemOutput(msg.getMensagem(), msg.getDataEnvio(), enviouMensagem));
-                chats.put(idOutroUsuario, new Chat(msg.getRemetente().getId(), msg.getRemetente().getEmail(), msg.getRemetente().getNome(), mensagemLista));
+                chats.put(outroUsuario.getId(), new Chat(outroUsuario.getId(), outroUsuario.getEmail(), outroUsuario.getNome(), mensagemLista));
             }
         }
         List<Chat> chatsLista = new ArrayList<>();

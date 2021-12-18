@@ -14,6 +14,6 @@ import java.util.List;
 public interface MensagemRepository extends JpaRepository<Mensagens, Long> {
     Mensagens getById(Long id);
 
-    @Query(value = "select * from mensagens where destinatario_id = :id or remetente_id = :id", nativeQuery = true)
+    @Query(value = "select * from mensagens where destinatario_id = :id or remetente_id = :id ORDER BY data_envio ASC", nativeQuery = true)
     List<Mensagens> getByUsuario(@Param("id") Long logadoId);
 }
