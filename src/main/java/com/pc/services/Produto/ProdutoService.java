@@ -3,10 +3,7 @@ package com.pc.services.Produto;
 import com.pc.configs.exceptions.MensagemException;
 import com.pc.configs.security.JWTUtil;
 import com.pc.dto.AluguelProduto.IntervaloDatas;
-import com.pc.dto.Produto.AlugarProdutoInput;
-import com.pc.dto.Produto.ProdutoInput;
-import com.pc.dto.Produto.ProdutoOutput;
-import com.pc.dto.Produto.ProdutoOutputListagem;
+import com.pc.dto.Produto.*;
 import com.pc.model.AluguelProduto;
 import com.pc.model.Produto;
 import com.pc.model.Usuario;
@@ -24,9 +21,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService {
@@ -116,7 +112,7 @@ public class ProdutoService {
     public ResponseEntity<Page<ProdutoOutputListagem>> listar(String paginaStr, String limitePaginaStr, String nome) {
         // Transformar dados string para para inteiro
         Pageable pageable;
-        int limiteInt = 10;
+        int limiteInt = 10000;
         int paginaInt = 0;
         try {
             if (limitePaginaStr != null) {
@@ -165,5 +161,54 @@ public class ProdutoService {
         return new ResponseEntity<Page<ProdutoOutputListagem>>(resultPage, HttpStatus.OK);
 
     }
+
+    public List<ProdutoOutputListagem> produtosAnunciados(HttpServletRequest req) {
+        Usuario logado = serviceHelper.getUsuarioLogado(req);
+
+        List<Produto> produtos = produtoRepo.getByLocatario(logado.getId());
+        List<ProdutoOutputListagem> produtosOutput = produtos.stream().map(item -> {
+            return new ProdutoOutputListagem(item.getId(), item.getAvaliacao(), item.getLocal(), item.getNome(), item.getPreco(), logado.getId(), logado.getEmail(), logado.getNome());
+        }).collect(Collectors.toList());
+
+        return produtosOutput;
+    }
+
+    public List<ProdutoOutputAlugadosListagem> produtosAlugados(HttpServletRequest req) {
+        Usuario logado = serviceHelper.getUsuarioLogado(req);
+
+        List<AluguelProduto> alugueis = aluguelRepo.getByLocador(logado.getId());
+        List<ProdutoOutputAlugadosListagem> alugueisAgrupados = agruparPorProduto(alugueis);
+
+        return alugueisAgrupados;
+    }
+
+    private List<ProdutoOutputAlugadosListagem> agruparPorProduto(List<AluguelProduto> alugueis) {
+        Map<Long, List<IntervaloDatas>> produtosDatas = new HashMap<>();
+        for (AluguelProduto aluguelProduto : alugueis) {
+            if (produtosDatas.containsKey(aluguelProduto.getProduto().getId())) {
+                produtosDatas.get(aluguelProduto.getProduto().getId()).add(new IntervaloDatas(aluguelProduto.getDataInicial(), aluguelProduto.getDataFinal()));
+            }
+            else {
+                List<IntervaloDatas> listaDatas = new ArrayList<>();
+                listaDatas.add(new IntervaloDatas(aluguelProduto.getDataInicial(), aluguelProduto.getDataFinal()));
+                produtosDatas.put(aluguelProduto.getProduto().getId(), listaDatas);
+            }
+        }
+
+        List<Produto> produtos = new ArrayList<>();
+        for (Long produtoId : produtosDatas.keySet()) {
+            produtos.add(produtoRepo.getById(produtoId));
+        }
+
+        List<ProdutoOutputAlugadosListagem> produtosAlugados = produtos.stream().map(produto -> {
+            return new ProdutoOutputAlugadosListagem(produto.getId(), produto.getAvaliacao(), produto.getLocal(), produto.getNome(), produto.getPreco(), produto.getLocatario().getId(), produto.getLocatario().getEmail(), produto.getLocatario().getNome(), new ArrayList<>());
+        }).collect(Collectors.toList());
+
+        for (ProdutoOutputAlugadosListagem p : produtosAlugados) {
+            p.setDatasAlugadas(produtosDatas.get(p.getId()));
+        }
+        return produtosAlugados;
+    }
+
 
 }

@@ -1,8 +1,12 @@
 package com.pc.dto.Produto;
 
+import com.pc.dto.AluguelProduto.IntervaloDatas;
 import com.pc.dto.Usuario.UsuarioLocatarioDto;
 
-public class ProdutoOutputListagem {
+import java.time.LocalDate;
+import java.util.List;
+
+public class ProdutoOutputAlugadosListagem {
 
     private Long id;
 
@@ -16,15 +20,18 @@ public class ProdutoOutputListagem {
 
     private Double avaliacao;
 
-    public ProdutoOutputListagem() {}
+    private List<IntervaloDatas> datasAlugadas;
 
-    public ProdutoOutputListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome) {
+    public ProdutoOutputAlugadosListagem() {}
+
+    public ProdutoOutputAlugadosListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, List<IntervaloDatas> datasAlugadas) {
         this.id = id;
         this.nome = nome;
         this.local = local;
         this.preco = preco;
         this.avaliacao = avaliacao;
         this.locatario = new UsuarioLocatarioDto(usuario_id, usuario_email, usuario_nome);
+        this.datasAlugadas = datasAlugadas;
     }
 
     public Long getId() {
@@ -73,5 +80,13 @@ public class ProdutoOutputListagem {
 
     public void setAvaliacao(Double avaliacao) {
         this.avaliacao = avaliacao;
+    }
+
+    public List<IntervaloDatas> getDatasAlugadas() {
+        return datasAlugadas;
+    }
+
+    public void setDatasAlugadas(List<IntervaloDatas> datasAlugadas) {
+        this.datasAlugadas = datasAlugadas;
     }
 }

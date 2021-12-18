@@ -1,9 +1,6 @@
 package com.pc.controllers;
 
-import com.pc.dto.Produto.AlugarProdutoInput;
-import com.pc.dto.Produto.ProdutoInput;
-import com.pc.dto.Produto.ProdutoOutput;
-import com.pc.dto.Produto.ProdutoOutputListagem;
+import com.pc.dto.Produto.*;
 import com.pc.services.Produto.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/produtos")
@@ -49,5 +47,19 @@ public class ProdutoController {
     @ResponseStatus(HttpStatus.OK)
     public void alugarProduto(@PathVariable Long id, @RequestBody @Valid AlugarProdutoInput alugarInput, HttpServletRequest req) {
         produtoService.alugarProduto(id, alugarInput, req);
+    }
+
+    // ** Ver produtos anunciados **
+    @GetMapping("/anuncios")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProdutoOutputListagem> verProdutosAnunciados(HttpServletRequest req) {
+        return produtoService.produtosAnunciados(req);
+    }
+
+    // ** Ver produtos que alugou **
+    @GetMapping("/alugueis")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProdutoOutputAlugadosListagem> verProdutosAlugados(HttpServletRequest req) {
+        return produtoService.produtosAlugados(req);
     }
 }

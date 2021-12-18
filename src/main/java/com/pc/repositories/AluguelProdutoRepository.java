@@ -12,6 +12,9 @@ import java.util.List;
 @Repository
 public interface AluguelProdutoRepository extends JpaRepository<AluguelProduto, Long> {
 
-    @Query(value = "SELECT * from aluguel_produto where produto_id = :id and data_final >= :now", nativeQuery = true)
+    @Query(value = "select * from aluguel_produto where produto_id = :id and data_final >= :now", nativeQuery = true)
     List<AluguelProduto> getDatasAlugadas(@Param("id") Long id, @Param("now") LocalDate now);
+
+    @Query(value = "select * from aluguel_produto where locador_id = :id ORDER BY data_inicial DESC", nativeQuery = true)
+    List<AluguelProduto> getByLocador(@Param("id") Long locadorId);
 }
