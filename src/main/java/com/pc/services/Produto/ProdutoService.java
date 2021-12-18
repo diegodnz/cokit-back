@@ -4,6 +4,7 @@ import com.pc.configs.exceptions.MensagemException;
 import com.pc.configs.security.JWTUtil;
 import com.pc.dto.AluguelProduto.IntervaloDatas;
 import com.pc.dto.Produto.*;
+import com.pc.dto.Usuario.UsuarioLocatarioDto;
 import com.pc.model.AluguelProduto;
 import com.pc.model.Produto;
 import com.pc.model.Usuario;
@@ -180,6 +181,31 @@ public class ProdutoService {
         List<ProdutoOutputAlugadosListagem> alugueisAgrupados = agruparPorProduto(alugueis);
 
         return alugueisAgrupados;
+    }
+
+    public List<ProdutoOutputAlugadosLocatarioListagem> produtosAnunciadosAlugados(HttpServletRequest req) {
+        Usuario logado = serviceHelper.getUsuarioLogado(req);
+
+        List<Produto> anunciadosAlugados = produtoRepo.getAnunciadosAlugados(logado.getId());
+        List<ProdutoOutputAlugadosLocatarioListagem> anunciadosAlugadosOutput = anunciadosAlugados.stream().map(produto -> {
+            return new ProdutoOutputAlugadosLocatarioListagem(produto.getId(), produto.getAvaliacao(), produto.getLocal(), produto.getNome(), produto.getPreco(),
+                    produto.getLocatario().getId(), produto.getLocatario().getEmail(), produto.getLocatario().getNome(), new HashMap<>());
+        }).collect(Collectors.toList());
+
+        List<AluguelProduto> alugueis = aluguelRepo.getByLocatario(logado.getId());
+        for (ProdutoOutputAlugadosLocatarioListagem p : anunciadosAlugadosOutput) {
+            for (AluguelProduto aluguel :  alugueis) {
+                if (aluguel.getProduto().getId() == p.getId()) {
+                    UsuarioLocatarioDto locador = new UsuarioLocatarioDto(aluguel.getLocador().getId(), aluguel.getLocador().getEmail(), aluguel.getLocador().getNome());
+                    if (!p.getMapAlugueisUsuarios().containsKey(locador)) {
+                        p.getMapAlugueisUsuarios().put(locador, new ArrayList<>());
+                    }
+                    p.getMapAlugueisUsuarios().get(locador).add(new IntervaloDatas(aluguel.getDataInicial(), aluguel.getDataFinal()));
+                }
+            }
+        }
+
+        return anunciadosAlugadosOutput;
     }
 
     private List<ProdutoOutputAlugadosListagem> agruparPorProduto(List<AluguelProduto> alugueis) {

@@ -16,6 +16,9 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     Produto getById(Long id);
 
     @Query(value = "select * from produto where usuario_id = :id ORDER BY avaliacao DESC NULLS LAST", nativeQuery = true)
-    List<Produto> getByLocatario(@Param("id") Long LocatarioId);
+    List<Produto> getByLocatario(@Param("id") Long locatarioId);
+
+    @Query(value = "select * from produto where usuario_id = :id and EXISTS (select * from aluguel_produto where produto.id = produto_id)", nativeQuery = true)
+    List<Produto> getAnunciadosAlugados(@Param("id") Long locatarioId);
 
 }

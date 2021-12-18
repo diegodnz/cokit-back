@@ -1,11 +1,17 @@
 package com.pc.dto.Produto;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pc.dto.AluguelProduto.IntervaloDatas;
+import com.pc.dto.AluguelProduto.UsuarioAluguelDatas;
 import com.pc.dto.Usuario.UsuarioLocatarioDto;
+import com.pc.model.Usuario;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class ProdutoOutputAlugadosListagem {
+public class ProdutoOutputAlugadosLocatarioListagem {
 
     private Long id;
 
@@ -19,18 +25,18 @@ public class ProdutoOutputAlugadosListagem {
 
     private Double avaliacao;
 
-    private List<IntervaloDatas> datasAlugadas;
+    private Map<UsuarioLocatarioDto, List<IntervaloDatas>> alugueisUsuarios;
 
-    public ProdutoOutputAlugadosListagem() {}
+    public ProdutoOutputAlugadosLocatarioListagem() {}
 
-    public ProdutoOutputAlugadosListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, List<IntervaloDatas> datasAlugadas) {
+    public ProdutoOutputAlugadosLocatarioListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, Map<UsuarioLocatarioDto, List<IntervaloDatas>> alugueisUsuarios) {
         this.id = id;
         this.nome = nome;
         this.local = local;
         this.preco = preco;
         this.avaliacao = avaliacao;
         this.locatario = new UsuarioLocatarioDto(usuario_id, usuario_email, usuario_nome);
-        this.datasAlugadas = datasAlugadas;
+        this.alugueisUsuarios = alugueisUsuarios;
     }
 
     public Long getId() {
@@ -81,11 +87,20 @@ public class ProdutoOutputAlugadosListagem {
         this.avaliacao = avaliacao;
     }
 
-    public List<IntervaloDatas> getDatasAlugadas() {
-        return datasAlugadas;
+    public List<UsuarioAluguelDatas> getAlugueisUsuarios() {
+        List<UsuarioAluguelDatas> usuarios = new ArrayList<>();
+        for (UsuarioLocatarioDto usuario : alugueisUsuarios.keySet()) {
+            usuarios.add(new UsuarioAluguelDatas(usuario, alugueisUsuarios.get(usuario)));
+        }
+        return usuarios;
     }
 
-    public void setDatasAlugadas(List<IntervaloDatas> datasAlugadas) {
-        this.datasAlugadas = datasAlugadas;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Map<UsuarioLocatarioDto, List<IntervaloDatas>> getMapAlugueisUsuarios() {
+        return alugueisUsuarios;
+    }
+
+    public void setAlugueisUsuarios(Map<UsuarioLocatarioDto, List<IntervaloDatas>> alugueisUsuarios) {
+        this.alugueisUsuarios = alugueisUsuarios;
     }
 }

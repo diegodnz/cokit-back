@@ -57,9 +57,16 @@ public class ProdutoController {
     }
 
     // ** Ver produtos que alugou **
-    @GetMapping("/alugueis")
+    @GetMapping("/alugados")
     @ResponseStatus(HttpStatus.OK)
     public List<ProdutoOutputAlugadosListagem> verProdutosAlugados(HttpServletRequest req) {
         return produtoService.produtosAlugados(req);
+    }
+
+    // ** Ver produtos anunciados e alugados **
+    @GetMapping("/anuncios/alugueis")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProdutoOutputAlugadosLocatarioListagem> verProdutosAnunciadosAlugados(HttpServletRequest req) {
+        return produtoService.produtosAnunciadosAlugados(req);
     }
 }

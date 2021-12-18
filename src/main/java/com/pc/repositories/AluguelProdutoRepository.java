@@ -17,4 +17,7 @@ public interface AluguelProdutoRepository extends JpaRepository<AluguelProduto, 
 
     @Query(value = "select * from aluguel_produto where locador_id = :id ORDER BY data_inicial DESC", nativeQuery = true)
     List<AluguelProduto> getByLocador(@Param("id") Long locadorId);
+
+    @Query(value = "select * from aluguel_produto alug inner join produto p on p.id = alug.produto_id where p.usuario_id = :id", nativeQuery = true)
+    List<AluguelProduto> getByLocatario(@Param("id") Long locatarioId);
 }

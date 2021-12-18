@@ -1,5 +1,7 @@
 package com.pc.dto.Usuario;
 
+import java.util.Objects;
+
 public class UsuarioLocatarioDto {
 
     private Long id;
@@ -38,5 +40,18 @@ public class UsuarioLocatarioDto {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UsuarioLocatarioDto that = (UsuarioLocatarioDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
