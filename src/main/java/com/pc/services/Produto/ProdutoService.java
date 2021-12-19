@@ -45,6 +45,11 @@ public class ProdutoService {
 
     public ResponseEntity<ProdutoOutput> cadastrar(ProdutoInput produto, HttpServletRequest req) {
         Usuario logado = serviceHelper.getUsuarioLogado(req);
+        
+        Produto produtoExistente = produtoRepo.findProdutoByNomeAndPrecoAndImagem(produto.getNome(), produto.getPreco(), produto.getImagem());
+        if (produtoExistente != null) {
+            throw new MensagemException("Produto já cadastrado", HttpStatus.BAD_REQUEST);
+        }
 
         Produto produtoEntidade = new Produto(produto.getNome(), produto.getDescricao(), logado, produto.getLocal(), produto.getPreco(), null, produto.getImagem(), produto.getDataInicial(), produto.getDataFinal());
         produtoRepo.save(produtoEntidade);

@@ -21,4 +21,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     @Query(value = "select * from produto where usuario_id = :id and EXISTS (select * from aluguel_produto where produto.id = produto_id)", nativeQuery = true)
     List<Produto> getAnunciadosAlugados(@Param("id") Long locatarioId);
 
+    Produto findProdutoByNomeAndPrecoAndImagem(String nome, Double preco, String imagem);
+
 }
