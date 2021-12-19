@@ -2,6 +2,8 @@ package com.pc.dto.Produto;
 
 import com.pc.dto.Usuario.UsuarioLocatarioDto;
 
+import java.time.LocalDate;
+
 public class ProdutoOutputListagem {
 
     private Long id;
@@ -18,9 +20,13 @@ public class ProdutoOutputListagem {
 
     private String imagem;
 
+    private LocalDate dataInicial;
+
+    private LocalDate dataFinal;
+
     public ProdutoOutputListagem() {}
 
-    public ProdutoOutputListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, String imagem) {
+    public ProdutoOutputListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, String imagem, LocalDate dataInicial, LocalDate dataFinal) {
         this.id = id;
         this.nome = nome;
         this.local = local;
@@ -28,6 +34,24 @@ public class ProdutoOutputListagem {
         this.avaliacao = avaliacao;
         this.locatario = new UsuarioLocatarioDto(usuario_id, usuario_email, usuario_nome);
         this.imagem = imagem;
+        this.dataInicial = dataInicial;
+        this.dataFinal = dataFinal;
+    }
+
+    public LocalDate getDataInicial() {
+        return dataInicial;
+    }
+
+    public void setDataInicial(LocalDate dataInicial) {
+        this.dataInicial = dataInicial;
+    }
+
+    public LocalDate getDataFinal() {
+        return dataFinal;
+    }
+
+    public void setDataFinal(LocalDate dataFinal) {
+        this.dataFinal = dataFinal;
     }
 
     public String getImagem() {

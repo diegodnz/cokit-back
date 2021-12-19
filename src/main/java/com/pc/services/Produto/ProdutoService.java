@@ -45,7 +45,7 @@ public class ProdutoService {
 
     public ResponseEntity<ProdutoOutput> cadastrar(ProdutoInput produto, HttpServletRequest req) {
         Usuario logado = serviceHelper.getUsuarioLogado(req);
-        
+
         Produto produtoExistente = produtoRepo.findProdutoByNomeAndPrecoAndImagem(produto.getNome(), produto.getPreco(), produto.getImagem());
         if (produtoExistente != null) {
             throw new MensagemException("Produto já cadastrado", HttpStatus.BAD_REQUEST);
@@ -173,7 +173,7 @@ public class ProdutoService {
 
         List<Produto> produtos = produtoRepo.getByLocatario(logado.getId());
         List<ProdutoOutputListagem> produtosOutput = produtos.stream().map(item -> {
-            return new ProdutoOutputListagem(item.getId(), item.getAvaliacao(), item.getLocal(), item.getNome(), item.getPreco(), logado.getId(), logado.getEmail(), logado.getNome(), item.getImagem());
+            return new ProdutoOutputListagem(item.getId(), item.getAvaliacao(), item.getLocal(), item.getNome(), item.getPreco(), logado.getId(), logado.getEmail(), logado.getNome(), item.getImagem(), item.getDataInicial(), item.getDataFinal());
         }).collect(Collectors.toList());
 
         return produtosOutput;
