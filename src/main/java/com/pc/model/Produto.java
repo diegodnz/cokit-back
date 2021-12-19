@@ -25,7 +25,9 @@ import java.util.Set;
                         @ColumnResult(name = "usuario_id", type = Long.class),
                         @ColumnResult(name = "usuario_email"),
                         @ColumnResult(name = "usuario_nome"),
-                        @ColumnResult(name = "imagem")
+                        @ColumnResult(name = "imagem"),
+                        @ColumnResult(name = "data_inicial", type = LocalDate.class),
+                        @ColumnResult(name = "data_final", type = LocalDate.class)
                 })
 )
 

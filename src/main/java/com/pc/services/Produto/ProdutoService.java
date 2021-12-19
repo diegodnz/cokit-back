@@ -133,7 +133,7 @@ public class ProdutoService {
         }
 
         // Fazer String de query
-        StringBuilder queryString = new StringBuilder().append("SELECT p.id, p.avaliacao, p.local, p.nome, p.preco, p.usuario_id, u.email as usuario_email, u.nome as usuario_nome, p.imagem as imagem")
+        StringBuilder queryString = new StringBuilder().append("SELECT p.id, p.avaliacao, p.local, p.nome, p.preco, p.usuario_id, u.email as usuario_email, u.nome as usuario_nome, p.imagem as imagem, p.data_inicial as data_inicial, p.data_final as data_final")
                 .append(" FROM Produto p")
                 .append(" INNER JOIN Usuario u")
                 .append(" ON p.usuario_id = u.id");

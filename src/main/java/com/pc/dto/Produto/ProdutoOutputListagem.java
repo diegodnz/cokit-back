@@ -26,7 +26,7 @@ public class ProdutoOutputListagem {
 
     public ProdutoOutputListagem() {}
 
-    public ProdutoOutputListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, String imagem, LocalDate dataInicial, LocalDate dataFinal) {
+    public ProdutoOutputListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, String imagem, LocalDate data_inicial, LocalDate data_final) {
         this.id = id;
         this.nome = nome;
         this.local = local;
@@ -34,8 +34,8 @@ public class ProdutoOutputListagem {
         this.avaliacao = avaliacao;
         this.locatario = new UsuarioLocatarioDto(usuario_id, usuario_email, usuario_nome);
         this.imagem = imagem;
-        this.dataInicial = dataInicial;
-        this.dataFinal = dataFinal;
+        this.dataInicial = data_inicial;
+        this.dataFinal = data_final;
     }
 
     public LocalDate getDataInicial() {
