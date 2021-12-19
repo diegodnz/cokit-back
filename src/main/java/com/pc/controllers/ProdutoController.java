@@ -69,4 +69,11 @@ public class ProdutoController {
     public List<ProdutoOutputAlugadosLocatarioListagem> verProdutosAnunciadosAlugados(HttpServletRequest req) {
         return produtoService.produtosAnunciadosAlugados(req);
     }
+
+    // ** Avaliar produto **
+    @PostMapping("/avaliar/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void avaliar(@RequestBody @Valid AvaliacaoProdutoInput avaliacao, @PathVariable Long id, HttpServletRequest req) {
+        produtoService.avaliarProduto(avaliacao, id, req);
+    }
 }

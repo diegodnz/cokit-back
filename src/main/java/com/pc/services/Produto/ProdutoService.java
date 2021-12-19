@@ -6,9 +6,11 @@ import com.pc.dto.AluguelProduto.IntervaloDatas;
 import com.pc.dto.Produto.*;
 import com.pc.dto.Usuario.UsuarioLocatarioDto;
 import com.pc.model.AluguelProduto;
+import com.pc.model.AvaliacaoProduto;
 import com.pc.model.Produto;
 import com.pc.model.Usuario;
 import com.pc.repositories.AluguelProdutoRepository;
+import com.pc.repositories.AvaliacaoProdutoRepository;
 import com.pc.repositories.ProdutoRepository;
 import com.pc.repositories.UsuarioRepository;
 import com.pc.services.ServiceHelper;
@@ -42,6 +44,9 @@ public class ProdutoService {
 
     @Autowired
     private ServiceHelper serviceHelper;
+
+    @Autowired
+    private AvaliacaoProdutoRepository avaliacaoProdutoRepository;
 
     public ResponseEntity<ProdutoOutput> cadastrar(ProdutoInput produto, HttpServletRequest req) {
         Usuario logado = serviceHelper.getUsuarioLogado(req);
@@ -239,6 +244,25 @@ public class ProdutoService {
             p.setDatasAlugadas(produtosDatas.get(p.getId()));
         }
         return produtosAlugados;
+    }
+
+    public void avaliarProduto(AvaliacaoProdutoInput avaliacao, Long produtoId, HttpServletRequest req) {
+        Usuario logado = serviceHelper.getUsuarioLogado(req);
+
+        Produto produto = produtoRepo.getById(produtoId);
+        if (produto == null) {
+            throw new MensagemException("Produto não encontrado", HttpStatus.BAD_REQUEST);
+        }
+
+        AvaliacaoProduto avaliacaoProdutoExistente = avaliacaoProdutoRepository.getByAvaliadorAndProduto(logado, produto);
+        if (avaliacaoProdutoExistente != null) {
+            throw new MensagemException("Você já avaliou este produto", HttpStatus.BAD_REQUEST);
+        }
+
+        AvaliacaoProduto avaliacaoEntidade = new AvaliacaoProduto(logado, produto, avaliacao.getAvaliacao());
+        avaliacaoProdutoRepository.save(avaliacaoEntidade);
+        produto.setAvaliacao(avaliacaoProdutoRepository.getMediaAvaliacaoProduto(produtoId));
+        produtoRepo.save(produto);
     }
 
 
