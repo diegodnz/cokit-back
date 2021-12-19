@@ -76,4 +76,11 @@ public class ProdutoController {
     public void avaliar(@RequestBody @Valid AvaliacaoProdutoInput avaliacao, @PathVariable Long id, HttpServletRequest req) {
         produtoService.avaliarProduto(avaliacao, id, req);
     }
+
+    // ** Deletar produto **
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void remover(@PathVariable Long id, HttpServletRequest req) {
+        produtoService.removerProduto(id, req);
+    }
 }

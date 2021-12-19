@@ -2,6 +2,7 @@ package com.pc.repositories;
 
 
 import com.pc.model.Produto;
+import com.pc.model.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,8 @@ import java.util.List;
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     Produto getById(Long id);
+
+    Produto getByIdAndLocatario(Long id, Usuario locatario);
 
     @Query(value = "select * from produto where usuario_id = :id ORDER BY avaliacao DESC NULLS LAST", nativeQuery = true)
     List<Produto> getByLocatario(@Param("id") Long locatarioId);

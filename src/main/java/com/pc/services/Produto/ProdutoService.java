@@ -265,5 +265,15 @@ public class ProdutoService {
         produtoRepo.save(produto);
     }
 
+    public void removerProduto(Long produtoId, HttpServletRequest req) {
+        Usuario logado = serviceHelper.getUsuarioLogado(req);
+        Produto produto = produtoRepo.getByIdAndLocatario(produtoId, logado);
+        if (produto == null) {
+            throw new MensagemException("Você não tem permissão para excluir este produto", HttpStatus.BAD_REQUEST);
+        }
+
+        produtoRepo.delete(produto);
+    }
+
 
 }
