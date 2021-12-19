@@ -25,11 +25,13 @@ public class ProdutoOutputAlugadosLocatarioListagem {
 
     private Double avaliacao;
 
+    private String imagem;
+
     private Map<UsuarioLocatarioDto, List<IntervaloDatas>> alugueisUsuarios;
 
     public ProdutoOutputAlugadosLocatarioListagem() {}
 
-    public ProdutoOutputAlugadosLocatarioListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, Map<UsuarioLocatarioDto, List<IntervaloDatas>> alugueisUsuarios) {
+    public ProdutoOutputAlugadosLocatarioListagem(Long id, Double avaliacao, String local, String nome, Double preco, Long usuario_id, String usuario_email, String usuario_nome, Map<UsuarioLocatarioDto, List<IntervaloDatas>> alugueisUsuarios, String imagem) {
         this.id = id;
         this.nome = nome;
         this.local = local;
@@ -37,6 +39,15 @@ public class ProdutoOutputAlugadosLocatarioListagem {
         this.avaliacao = avaliacao;
         this.locatario = new UsuarioLocatarioDto(usuario_id, usuario_email, usuario_nome);
         this.alugueisUsuarios = alugueisUsuarios;
+        this.imagem = imagem;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
     }
 
     public Long getId() {

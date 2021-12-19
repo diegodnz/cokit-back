@@ -24,7 +24,8 @@ import java.util.Set;
                         @ColumnResult(name = "preco", type = Double.class),
                         @ColumnResult(name = "usuario_id", type = Long.class),
                         @ColumnResult(name = "usuario_email"),
-                        @ColumnResult(name = "usuario_nome")
+                        @ColumnResult(name = "usuario_nome"),
+                        @ColumnResult(name = "imagem")
                 })
 )
 
@@ -55,18 +56,51 @@ public class Produto implements Serializable {
 
     private Double avaliacao;
 
+    private String imagem;
+
+    private LocalDate dataInicial;
+
+    private LocalDate dataFinal;
+
     @OneToMany(mappedBy = "produto")
     private List<AluguelProduto> alugueis;
 
     public Produto() {}
 
-    public Produto(String nome, String descricao, Usuario locatario, String local, Double preco, Double avaliacao) {
+    public Produto(String nome, String descricao, Usuario locatario, String local, Double preco, Double avaliacao, String imagem, LocalDate dataInicial, LocalDate dataFinal) {
         this.nome = nome;
         this.descricao = descricao;
         this.locatario = locatario;
         this.local = local;
         this.preco = preco;
         this.avaliacao = avaliacao;
+        this.imagem = imagem;
+        this.dataInicial = dataInicial;
+        this.dataFinal = dataFinal;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
+
+    public LocalDate getDataInicial() {
+        return dataInicial;
+    }
+
+    public void setDataInicial(LocalDate dataInicial) {
+        this.dataInicial = dataInicial;
+    }
+
+    public LocalDate getDataFinal() {
+        return dataFinal;
+    }
+
+    public void setDataFinal(LocalDate dataFinal) {
+        this.dataFinal = dataFinal;
     }
 
     public List<AluguelProduto> getAlugueis() {

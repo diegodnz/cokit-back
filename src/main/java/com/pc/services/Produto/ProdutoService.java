@@ -46,10 +46,10 @@ public class ProdutoService {
     public ResponseEntity<ProdutoOutput> cadastrar(ProdutoInput produto, HttpServletRequest req) {
         Usuario logado = serviceHelper.getUsuarioLogado(req);
 
-        Produto produtoEntidade = new Produto(produto.getNome(), produto.getDescricao(), logado, produto.getLocal(), produto.getPreco(), null);
+        Produto produtoEntidade = new Produto(produto.getNome(), produto.getDescricao(), logado, produto.getLocal(), produto.getPreco(), null, produto.getImagem(), produto.getDataInicial(), produto.getDataFinal());
         produtoRepo.save(produtoEntidade);
 
-        ProdutoOutput produtoOutput = new ProdutoOutput(produtoEntidade.getId(), produtoEntidade.getNome(), produtoEntidade.getDescricao(),logado.getId(), logado.getEmail(), logado.getNome(), produtoEntidade.getLocal(), produtoEntidade.getPreco(), null, new HashSet<>());
+        ProdutoOutput produtoOutput = new ProdutoOutput(produtoEntidade.getId(), produtoEntidade.getNome(), produtoEntidade.getDescricao(),logado.getId(), logado.getEmail(), logado.getNome(), produtoEntidade.getLocal(), produtoEntidade.getPreco(), null, new HashSet<>(), produtoEntidade.getImagem(), produtoEntidade.getDataInicial(), produtoEntidade.getDataFinal());
         return new ResponseEntity<>(produtoOutput, HttpStatus.CREATED);
     }
 
@@ -87,7 +87,7 @@ public class ProdutoService {
         }
         HashSet<LocalDate> datasIndisponiveis = obterDatasIndisponiveis(produto.getId());
         Usuario locatario = usuarioRepo.getOne(produto.getLocatario().getId());
-        return new ResponseEntity<>(new ProdutoOutput(produto.getId(), produto.getNome(), produto.getDescricao(), locatario.getId(), locatario.getEmail(), locatario.getNome(), produto.getLocal(), produto.getPreco(), produto.getAvaliacao(), datasIndisponiveis), HttpStatus.OK);
+        return new ResponseEntity<>(new ProdutoOutput(produto.getId(), produto.getNome(), produto.getDescricao(), locatario.getId(), locatario.getEmail(), locatario.getNome(), produto.getLocal(), produto.getPreco(), produto.getAvaliacao(), datasIndisponiveis, produto.getImagem(), produto.getDataInicial(), produto.getDataFinal()), HttpStatus.OK);
     }
 
     public void alugarProduto(Long id, AlugarProdutoInput alugarInput, HttpServletRequest req) {
@@ -128,7 +128,7 @@ public class ProdutoService {
         }
 
         // Fazer String de query
-        StringBuilder queryString = new StringBuilder().append("SELECT p.id, p.avaliacao, p.local, p.nome, p.preco, p.usuario_id, u.email as usuario_email, u.nome as usuario_nome")
+        StringBuilder queryString = new StringBuilder().append("SELECT p.id, p.avaliacao, p.local, p.nome, p.preco, p.usuario_id, u.email as usuario_email, u.nome as usuario_nome, p.imagem as imagem")
                 .append(" FROM Produto p")
                 .append(" INNER JOIN Usuario u")
                 .append(" ON p.usuario_id = u.id");
@@ -168,7 +168,7 @@ public class ProdutoService {
 
         List<Produto> produtos = produtoRepo.getByLocatario(logado.getId());
         List<ProdutoOutputListagem> produtosOutput = produtos.stream().map(item -> {
-            return new ProdutoOutputListagem(item.getId(), item.getAvaliacao(), item.getLocal(), item.getNome(), item.getPreco(), logado.getId(), logado.getEmail(), logado.getNome());
+            return new ProdutoOutputListagem(item.getId(), item.getAvaliacao(), item.getLocal(), item.getNome(), item.getPreco(), logado.getId(), logado.getEmail(), logado.getNome(), item.getImagem());
         }).collect(Collectors.toList());
 
         return produtosOutput;
@@ -189,7 +189,7 @@ public class ProdutoService {
         List<Produto> anunciadosAlugados = produtoRepo.getAnunciadosAlugados(logado.getId());
         List<ProdutoOutputAlugadosLocatarioListagem> anunciadosAlugadosOutput = anunciadosAlugados.stream().map(produto -> {
             return new ProdutoOutputAlugadosLocatarioListagem(produto.getId(), produto.getAvaliacao(), produto.getLocal(), produto.getNome(), produto.getPreco(),
-                    produto.getLocatario().getId(), produto.getLocatario().getEmail(), produto.getLocatario().getNome(), new HashMap<>());
+                    produto.getLocatario().getId(), produto.getLocatario().getEmail(), produto.getLocatario().getNome(), new HashMap<>(), produto.getImagem());
         }).collect(Collectors.toList());
 
         List<AluguelProduto> alugueis = aluguelRepo.getByLocatario(logado.getId());
@@ -227,7 +227,7 @@ public class ProdutoService {
         }
 
         List<ProdutoOutputAlugadosListagem> produtosAlugados = produtos.stream().map(produto -> {
-            return new ProdutoOutputAlugadosListagem(produto.getId(), produto.getAvaliacao(), produto.getLocal(), produto.getNome(), produto.getPreco(), produto.getLocatario().getId(), produto.getLocatario().getEmail(), produto.getLocatario().getNome(), new ArrayList<>());
+            return new ProdutoOutputAlugadosListagem(produto.getId(), produto.getAvaliacao(), produto.getLocal(), produto.getNome(), produto.getPreco(), produto.getLocatario().getId(), produto.getLocatario().getEmail(), produto.getLocatario().getNome(), new ArrayList<>(), produto.getImagem());
         }).collect(Collectors.toList());
 
         for (ProdutoOutputAlugadosListagem p : produtosAlugados) {
