@@ -18,7 +18,7 @@ public class AluguelProduto implements Serializable {
     @ManyToOne
     private Usuario locador;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Produto produto;
 
     private LocalDate dataInicial;

@@ -64,8 +64,11 @@ public class Produto implements Serializable {
 
     private LocalDate dataFinal;
 
-    @OneToMany(mappedBy = "produto")
+    @OneToMany(mappedBy = "produto", orphanRemoval = true)
     private List<AluguelProduto> alugueis;
+
+    @OneToMany(mappedBy = "produto", orphanRemoval = true)
+    private List<AvaliacaoProduto> avaliacoes;
 
     public Produto() {}
 

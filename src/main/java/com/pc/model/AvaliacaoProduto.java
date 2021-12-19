@@ -16,7 +16,7 @@ public class AvaliacaoProduto implements Serializable {
     @ManyToOne
     private Usuario avaliador;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Produto produto;
 
     private Double avaliacao;
